@@ -2,23 +2,38 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Enable CORS for all requests
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
 let rooms = [
-  { code: 'ABC123', name: 'Demo Game', playerCount: 3 },
-  { code: 'XYZ789', name: 'Math Challenge', playerCount: 8 }
+    { code: 'ABC123', name: 'Demo Game', playerCount: 3 },
+    { code: 'XYZ789', name: 'Math Challenge', playerCount: 8 }
 ];
 
 app.use(express.json());
 
 app.get('/api/rooms', (req, res) => {
-  res.json({ rooms });
+    res.json({ rooms });
 });
 
 app.post('/api/rooms', (req, res) => {
-  const { code, name, playerCount } = req.body;
-  rooms.push({ code, name, playerCount });
-  res.status(201).json({ message: 'Room added' });
+    const { code, name, playerCount } = req.body;
+    rooms.push({ code, name, playerCount });
+    res.status(201).json({ message: 'Room added' });
+});
+
+app.get('/', (req, res) => {
+    res.send('Gimkit Room Finder Backend is running. Use /api/rooms');
 });
 
 app.listen(port, () => {
-  console.log(`Backend listening on port ${port}`);
+    console.log(`Backend listening on port ${port}`);
 });
